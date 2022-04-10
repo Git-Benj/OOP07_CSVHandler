@@ -14,14 +14,18 @@ import java.util.List;
 public class IOHandler {
 
     public static ArrayList<List> readCSV(String filePath) {
+        new File("output/logFile.txt").delete();
         List<String> attributes;
         ArrayList<List> out = new ArrayList<>();
         String line;
-
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             while ((line = br.readLine()) != null) {
                 attributes = Arrays.asList(line.split(";"));
-                out.add(attributes);
+                if (attributes.size() < 6) {
+                    writingLOG("Malformed input @ line: " + line + "--ignoring line");
+                } else {
+                    out.add(attributes);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,6 +56,18 @@ public class IOHandler {
                             String.valueOf(t.getRating()).replace('.', ',') + '\n';
                 }
                 bw.write(line);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writingLOG(String message) {
+        File file = new File("output/logFile.txt");
+        try (FileWriter fw = new FileWriter(file, true)) {
+            if (file.exists()) {
+                fw.write(message);
+                fw.write('\n');
             }
         } catch (Exception e) {
             e.printStackTrace();
