@@ -45,14 +45,16 @@ public class Tracks {
         if (ranking <= 75) {
             putNewTrack(ranking + 1, nTrack);
         } else {
-            popOldTrack(nTrack);
+            popOldTrack(track);
         }
     }
 
     //garbage collection for old track
     public void popOldTrack(Track track) {
-        for (Artist a : track.getArtistList())
+        for (Artist a : track.getArtistList()) {
             a.popRatings(track.getRating());
+        }
+        tracks.remove(76, track);
     }
 
     public void shiftWeek() {
@@ -70,5 +72,9 @@ public class Tracks {
                 tracks.get(i).printTrack(i);
             }
         }
+    }
+
+    public HashMap<Integer, Track> getTracks() {
+        return tracks;
     }
 }

@@ -34,7 +34,7 @@ public class IOHandler {
         String line;
         File file = new File(filePath);
         for (int i = 1; true; i++) {
-            if (file.canWrite()) {
+            if (!file.exists() || file.canWrite()) {
                 break;
             }
             filePath = filePath.replace(".csv", "V" + i + ".csv");
@@ -42,7 +42,7 @@ public class IOHandler {
         }
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             Track t;
-            for (int i = 0; i < top40s.size(); i++) {
+            for (int i = 0; i <= top40s.size(); i++) {
                 if (i < 1) {
                     line = "DW;LW;WW;Titel;Interpret;Bewertung\n";
                 } else {
