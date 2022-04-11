@@ -25,6 +25,7 @@ public class Artist implements Comparable<Artist> {
         return ratingMean;
     }
 
+    //recalculates mean of ratings
     public void setRatingMean() {
         ratingMean = (float) ratings.stream().mapToDouble(Float::doubleValue).sum();
         ratingMean = Math.round((ratingMean / ratings.size()) * 100f) / 100f;

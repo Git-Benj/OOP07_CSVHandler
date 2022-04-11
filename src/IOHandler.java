@@ -6,6 +6,8 @@
  */
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.List;
 
 public class IOHandler {
 
+    //log.File.txt is deleted and CSV file values put into ArrayList with list elements(equal to cell values)
     public static ArrayList<List> readCSV(String filePath) {
         new File("output/logFile.txt").delete();
         List<String> attributes;
@@ -33,35 +36,104 @@ public class IOHandler {
         return out;
     }
 
-    public static void createCSV(HashMap<Integer, Track> top40s, String year) {
-        String filePath = "output/" + "music" + year + ".csv";
-        String line;
-        File file = new File(filePath);
-        for (int i = 1; true; i++) {
-            if (!file.exists() || file.canWrite()) {
+    //return short value from list object
+    public static Short parseShort(List<String> ls, int pos) {
+        String s = "";
+        try {
+            if (ls.get(pos) != "") {
+                return Short.parseShort(ls.get(pos));
+            } else {
+                return 0;
+            }
+        } catch (Exception e) {
+            switch (pos) {
+                case 0 -> s = "Number parsing error for DW";
+                case 1 -> s = "Number parsing error for LW";
+                case 2 -> s = "Number parsing error for WW";
+            }
+            IOHandler.writingLOG(s + " @ line:" + ls + " --ignoring\n(" + e.getMessage() + ")");
+        }
+        return -1;
+    }
+
+    //return float value from list object
+    public static Float parseFloat(List<String> ls, int pos) {
+        try {
+            if (ls.get(pos) != "") {
+                return Float.parseFloat(ls.get(pos).replace(',', '.'));
+            } else {
+                return 0f;
+            }
+        } catch (Exception e) {
+            IOHandler.writingLOG("Parse exception for Bewertung @ line:" + ls + " --ignoring\n(" + e.getMessage() + ")");
+        }
+        return -1f;
+    }
+
+    //writes tracks handled by program into a new CSV
+    public static void createCSV(HashMap<Integer, Track> tracks, String year) {
+        StringBuilder filePath = new StringBuilder();
+        File file = new File(filePath.append("output/music").append(year).append(".csv").toString());
+        if (!file.exists() || file.canWrite()) {
+            for (int i = 2; true; i++) {
+                file = new File(filePath.toString()
+                        .replace(".csv", "_V" + i + ".csv"));
                 break;
             }
-            filePath = filePath.replace(".csv", "V" + i + ".csv");
-            file = new File(filePath);
         }
+        StringBuilder line = new StringBuilder();
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             Track t;
-            for (int i = 0; i <= top40s.size(); i++) {
-                if (i < 1) {
-                    line = "DW;LW;WW;Titel;Interpret;Bewertung\n";
-                } else {
-                    t = top40s.get(i);
-                    line = String.valueOf(i) + ';' + t.getLw() + ';' + t.getWw() +
-                            ';' + t.getTitle() + ';' + t.getArtist() + ';' +
-                            String.valueOf(t.getRating()).replace('.', ',') + '\n';
-                }
-                bw.write(line);
+            bw.write("DW;LW;WW;Titel;Interpret;Bewertung\n");
+            for (int i = 1; i <= tracks.size(); i++) {
+                t = tracks.get(i);
+                line.append(i).append(';')
+                        .append(appendNum(t.getLw())).append(';')
+                        .append(appendNum(t.getWw())).append(';')
+                        .append(t.getTitle()).append(';')
+                        .append(t.getArtist()).append(';')
+                        .append(String.valueOf(t.getRating()).replace('.', ',')).append('\n');
+                bw.write(line.toString());
+                line.setLength(0);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public static String appendNum(short s) {
+        if (s == 0) {
+            return "";
+        }
+        return String.valueOf(s);
+    }
+
+    //writes artists in CSV. ATTENTION it has to be sorted before written in CSV
+    public static void createCSV(ArrayList<Artist> artists) {
+        File file = new File("output/artists.csv");
+        if (!file.exists() || file.canWrite()) {
+            for (int i = 2; true; i++) {
+                file = new File(file.getPath().replace(".csv", "_V" + i + ".csv"));
+                break;
+            }
+        }
+        StringBuilder line = new StringBuilder();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+            bw.write("Interpret;Number of Tracks;Average Rating;Single Rating\n");
+            for (Artist a : artists) {
+                line.append(a.getName()).append(';')
+                        .append(a.getRatings().length()).append(';')
+                        .append(a.getRatingMean()).append(';')
+                        .append(a.getRatings()).append('\n');
+                bw.write(line.toString());
+                line.setLength(0);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //creates logFile of Exceptions and adds lines
     public static void writingLOG(String message) {
         File file = new File("output/logFile.txt");
         try (FileWriter fw = new FileWriter(file, true)) {

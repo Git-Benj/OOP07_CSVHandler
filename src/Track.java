@@ -28,6 +28,7 @@ public class Track {
         this.rating = rating;
     }
 
+    //constructor for new tracks
     public Track(String title, String artist, float rating) {
         this.ww = 1;
         this.title = title;

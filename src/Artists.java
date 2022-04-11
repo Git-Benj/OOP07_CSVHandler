@@ -38,6 +38,7 @@ public class Artists {
         artistArray.sort(sortByRating);
     }
 
+    //converts map<name, artists into an arrayList
     private static void preConverter() {
         if (artistArray == null) {
             artistArray = new ArrayList<>(artists.values());

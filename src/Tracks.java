@@ -17,45 +17,12 @@ public class Tracks {
         short dw = 0;
         float rating = 0;
         List<List> list = IOHandler.readCSV(input);
-        int i = 0;
         for (List ls : list.subList(1, list.size())) {
-            i++;
-            try {
-                lw = Short.parseShort((String) ls.get(0));
-            } catch (Exception e) {
-                cellError("Number parsing error for DW", ls, e);
-                continue;
-            }
-            try {
-                if (!(ls.get(1).equals(""))) {
-                    lw = Short.parseShort((String) ls.get(1));
-                    continue;
-                }
-            } catch (Exception e) {
-                cellError("Number parsing error for LW", ls, e);
-                continue;
-            }
-            try {
-                if (!(ls.get(2).equals(""))) {
-                    dw = Short.parseShort((String) ls.get(2));
-                }
-            } catch (Exception e) {
-                cellError("Number parsing error for WW", ls, e);
-            }
-            try {
-                if (!(ls.get(5).equals(""))) {
-                    rating = Float.parseFloat(ls.get(5).toString().replace(',', '.'));
-                }
-            } catch (Exception e) {
-                cellError("Parse exception for Bewertung", ls, e);
-                continue;
-            } finally {
-                tracks.put(i, new Track(lw, dw, (String) ls.get(3), (String) ls.get(4), rating));
-            }
-
+            tracks.put((int) IOHandler.parseShort(ls, 0), new Track(IOHandler.parseShort(ls, 1), IOHandler.parseShort(ls, 2), (String) ls.get(3), (String) ls.get(4), IOHandler.parseFloat(ls, 5)));
         }
     }
 
+    //write exception into logFile.txt
     private void cellError(String s, List ls, Exception e) {
         IOHandler.writingLOG(s + " @ line:" + ls + " --ignoring\n(" + e.getMessage() + ")");
     }
@@ -79,6 +46,7 @@ public class Tracks {
         tracks.remove(76, track);
     }
 
+    //DW and LW swaps
     public void shiftWeek() {
         for (int i = 1; i <= tracks.size(); i++) {
             tracks.get(i).setLw((short) i);
