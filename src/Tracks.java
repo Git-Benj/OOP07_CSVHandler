@@ -2,7 +2,7 @@
  * Project: "Top40"
  * Author: Benjamin Lamprecht
  * Created: 09.04.2022
- * Last Change: 10.04.2022
+ * Last Change: 11.04.2022
  */
 
 import java.util.HashMap;
@@ -13,18 +13,10 @@ public class Tracks {
 
     //fetches via IOHandler the inputs of a Track.csv and parses its values for track constructor
     public Tracks(String input) {
-        short lw = 0;
-        short dw = 0;
-        float rating = 0;
         List<List> list = IOHandler.readCSV(input);
         for (List ls : list.subList(1, list.size())) {
             tracks.put((int) IOHandler.parseShort(ls, 0), new Track(IOHandler.parseShort(ls, 1), IOHandler.parseShort(ls, 2), (String) ls.get(3), (String) ls.get(4), IOHandler.parseFloat(ls, 5)));
         }
-    }
-
-    //write exception into logFile.txt
-    private void cellError(String s, List ls, Exception e) {
-        IOHandler.writingLOG(s + " @ line:" + ls + " --ignoring\n(" + e.getMessage() + ")");
     }
 
     //rearranging list with new track
