@@ -6,12 +6,7 @@
  */
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class IOHandler {
 
@@ -40,7 +35,7 @@ public class IOHandler {
     public static Short parseShort(List<String> ls, int pos) {
         String s = "";
         try {
-            if (ls.get(pos) != "") {
+            if (!Objects.equals(ls.get(pos), "")) {
                 return Short.parseShort(ls.get(pos));
             } else {
                 return 0;
@@ -59,7 +54,7 @@ public class IOHandler {
     //return float value from list object
     public static Float parseFloat(List<String> ls, int pos) {
         try {
-            if (ls.get(pos) != "") {
+            if (!Objects.equals(ls.get(pos), "")) {
                 return Float.parseFloat(ls.get(pos).replace(',', '.'));
             } else {
                 return 0f;
