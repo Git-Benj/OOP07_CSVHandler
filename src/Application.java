@@ -10,17 +10,31 @@ public class Application {
     public static void main(String[] args) {
 
         Tracks top40 = new Tracks("input/music2022.csv");
-        //top40.printList();
-        //top40.shiftWeek();
+
+        //prints all tracks to console
+        top40.printList();
+
+        //start of new week
+        top40.shiftWeek();
+        //new song put in list
         top40.putNewTrack(8, new Track("Tanz der Kühe", "Lisa Stoll", 1.5f));
+
         //print CSV
-        IOHandler.createCSV(top40.getTracks(), "2023");
-        //top40.printList();
+        IOHandler.createCSV(top40.getTracks(), "KW2");
+
+        //artists are sorted by numbers of songs in list
         Artists.sort1stLevel();
-        //print artistCSV
+        //write artists to CSV
+        IOHandler.createCSV(Artists.artistArray, "sortLevel1");
+
+        //artists are sorted by mean of ratings
         Artists.sort2ndLevel();
-        IOHandler.createCSV(Artists.artistArray);
-        //Artists.printArtist();
+        //write artists to CSV
+        IOHandler.createCSV(Artists.artistArray, "sortLevel2");
+
+        //print artists into console
+        Artists.printArtist();
+
     }
 
 }

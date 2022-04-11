@@ -6,6 +6,8 @@
  */
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class IOHandler {
@@ -66,18 +68,11 @@ public class IOHandler {
     }
 
     //writes tracks handled by program into a new CSV
-    public static void createCSV(HashMap<Integer, Track> tracks, String year) {
+    public static void createCSV(HashMap<Integer, Track> tracks, String week) {
         StringBuilder filePath = new StringBuilder();
-        File file = new File(filePath.append("output/music").append(year).append(".csv").toString());
-        if (!file.exists() || file.canWrite()) {
-            for (int i = 2; true; i++) {
-                file = new File(filePath.toString()
-                        .replace(".csv", "_V" + i + ".csv"));
-                break;
-            }
-        }
+        File file = new File(filePath.append("output/music").append(week).append(".csv").toString());
         StringBuilder line = new StringBuilder();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileIsWritable(file)))) {
             Track t;
             bw.write("DW;LW;WW;Titel;Interpret;Bewertung\n");
             for (int i = 1; i <= tracks.size(); i++) {
@@ -104,16 +99,10 @@ public class IOHandler {
     }
 
     //writes artists in CSV. ATTENTION it has to be sorted before written in CSV
-    public static void createCSV(ArrayList<Artist> artists) {
-        File file = new File("output/artists.csv");
-        if (!file.exists() || file.canWrite()) {
-            for (int i = 2; true; i++) {
-                file = new File(file.getPath().replace(".csv", "_V" + i + ".csv"));
-                break;
-            }
-        }
+    public static void createCSV(ArrayList<Artist> artists, String sortLevel) {
+        File file = new File("output/artists_" + sortLevel + ".csv");
         StringBuilder line = new StringBuilder();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileIsWritable(file)))) {
             bw.write("Interpret;Number of Tracks;Average Rating;Single Rating\n");
             for (Artist a : artists) {
                 line.append(a.getName()).append(';')
@@ -126,6 +115,17 @@ public class IOHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //finds/creates a file based on writing permission
+    public static File fileIsWritable(File file) {
+        if (file.exists() && !Files.isWritable(Path.of(file.getAbsolutePath()))) {
+            for (int i = 2; true; i++) {
+                file = new File(file.getPath().replace(".csv", "_V" + i + ".csv"));
+                break;
+            }
+        }
+        return file;
     }
 
     //creates logFile of Exceptions and adds lines

@@ -2,7 +2,7 @@
  An CSV filled with music tracks can be loaded into the program.\
 For convenience sake the filepath is hardcoded to [music.csv](input/music2022.csv) in input folder.
 
-###Current features:
+##Current features:
 
 | TODO/DONE | Task                                                |
 |-----------|-----------------------------------------------------|
@@ -16,3 +16,14 @@ For convenience sake the filepath is hardcoded to [music.csv](input/music2022.cs
 | DONE      | CSV file writer for tracks/artists                  |
 | DONE      | ErrorLogfile for exceptions                         |
 | DONE      | FileHandler if file isn't accessible                |
+
+
+
+##simple depiction of program logic via flowchart
+
+![ER-diagramm.png](ER-diagramm.png)
+
+___
+##simple depiction of program logic via ER-diagram
+
+![flowchart.png](Flowchart.png)
