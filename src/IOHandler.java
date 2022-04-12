@@ -72,22 +72,25 @@ public class IOHandler {
         StringBuilder filePath = new StringBuilder();
         File file = new File(filePath.append("output/music").append(week).append(".csv").toString());
         StringBuilder line = new StringBuilder();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileIsWritable(file)))) {
-            Track t;
-            bw.write("DW;LW;WW;Titel;Interpret;Bewertung\n");
-            for (int i = 1; i <= tracks.size(); i++) {
-                t = tracks.get(i);
-                line.append(i).append(';')
-                        .append(appendNum(t.getLw())).append(';')
-                        .append(appendNum(t.getWw())).append(';')
-                        .append(t.getTitle()).append(';')
-                        .append(t.getArtist()).append(';')
-                        .append(String.valueOf(t.getRating()).replace('.', ',')).append('\n');
-                bw.write(line.toString());
-                line.setLength(0);
+        for (int j = 2; true; j++) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                Track t;
+                bw.write("DW;LW;WW;Titel;Interpret;Bewertung\n");
+                for (int i = 1; i <= tracks.size(); i++) {
+                    t = tracks.get(i);
+                    line.append(i).append(';')
+                            .append(appendNum(t.getLw())).append(';')
+                            .append(appendNum(t.getWw())).append(';')
+                            .append(t.getTitle()).append(';')
+                            .append(t.getArtist()).append(';')
+                            .append(String.valueOf(t.getRating()).replace('.', ',')).append('\n');
+                    bw.write(line.toString());
+                    line.setLength(0);
+                }
+                return;
+            } catch (Exception e) {
+                file = new File(file.getPath().replace(".csv", "_V" + j + ".csv"));
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
@@ -102,18 +105,21 @@ public class IOHandler {
     public static void createCSV(ArrayList<Artist> artists, String sortLevel) {
         File file = new File("output/artists_" + sortLevel + ".csv");
         StringBuilder line = new StringBuilder();
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileIsWritable(file)))) {
-            bw.write("Interpret;Number of Tracks;Average Rating;Single Rating\n");
-            for (Artist a : artists) {
-                line.append(a.getName()).append(';')
-                        .append(a.getRatings().length()).append(';')
-                        .append(a.getRatingMean()).append(';')
-                        .append(a.getRatings()).append('\n');
-                bw.write(line.toString());
-                line.setLength(0);
+        for (int i = 0; true; i++) {
+            try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+                bw.write("Interpret;Number of Tracks;Average Rating;Single Rating\n");
+                for (Artist a : artists) {
+                    line.append(a.getName()).append(';')
+                            .append(a.getRatings().length()).append(';')
+                            .append(a.getRatingMean()).append(';')
+                            .append(a.getRatings()).append('\n');
+                    bw.write(line.toString());
+                    line.setLength(0);
+                }
+                return;
+            } catch (IOException e) {
+                file = new File(file.getPath().replace(".csv", "_V" + i + ".csv"));
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
